@@ -1,5 +1,9 @@
 #!/bin/bash
-// Add non root user with permissions to execute everything in /opt/dynatrace (which itself is a symlink to /opt/dynatrace-7.0)
+sudo useradd dynatrace
+sudo groupadd dynatrace
+sudo usermod -a -G dynatrace dynatrace
+sudo chown -R dynatrace:dynatrace /opt/dynatrace
+sudo chown -R dynatrace:dynatrace /opt/dynatrace-7.0
 
 sudo yum update -y
 sudo yum install java-1.8.0-openjdk wget -y
@@ -7,6 +11,8 @@ sudo wget https://files.dynatrace.com/downloads/OnPrem/dynaTrace/7.0/7.0.0.2429/
 sudo /usr/bin/java8 -jar /opt/dynatrace-full-7.0.0.2429-linux-x86-64.jar -y
 sudo ln -s /opt/dynatrace-7.0 /opt/dynatrace
 sudo cp /opt/dynatrace/init.d/dynaTraceServer /etc/init.d
-sudo sed -i -e 's,/opt/dynatrace-7.0,/opt/dynatrace,g' /etc/init.d/dynaTraceServer
+sudo sed -i -e 's,DT_HOME="/opt/dynatrace-7.0",DT_HOME="/opt/dynatrace",g' /etc/init.d/dynaTraceServer
+sudo sed -i -e 's,DT_OPTARGS=,DT_OPTARGS="-sizing small",g' /etc/init.d/dynaTraceServer
+sudo sed -i -e 's,DT_RUNASUSER=,DT_RUNASUSER=dynatrace,g' /etc/init.d/dynaTraceServer
 sudo chkconfig --add /etc/init.d/dynaTraceServer
 sudo service dynaTraceServer start
