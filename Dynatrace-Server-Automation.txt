@@ -11,4 +11,4 @@ sudo cp /opt/dynatrace/init.d/dynaTraceServer /etc/init.d
 sudo sed -i -e 's,DT_OPTARGS=,DT_OPTARGS="-sizing demo -memory demo",g' /etc/init.d/dynaTraceServer
 sudo sed -i -e 's,DT_FE_OPTARGS=,DT_FE_OPTARGS="-sizing demo -memory demo",g' /etc/init.d/dynaTraceFrontendServer
 sudo sed -i -e 's,DT_RUNASUSER=,DT_RUNASUSER=dynatrace,g' /etc/init.d/dynaTraceServer
-service dynaTraceServer start
+sudo service dynaTraceServer start
