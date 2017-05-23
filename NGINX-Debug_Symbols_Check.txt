@@ -1,0 +1,3 @@
+/usr/sbin/nginx -V 2>&1 | grep -- '--with-debug'
+
+If no output, no debug symbols.
