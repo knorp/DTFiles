@@ -4,8 +4,8 @@ sudo groupadd dynatrace
 sudo usermod -a -G dynatrace dynatrace
 sudo yum update -y
 sudo yum install java-1.8.0-openjdk wget -y
-sudo wget https://files.dynatrace.com/downloads/OnPrem/dynaTrace/7.0/7.0.0.2429/dynatrace-full-7.0.0.2429-linux-x86-64.jar -P /opt
-sudo /usr/bin/java8 -jar /opt/dynatrace-full-7.0.0.2429-linux-x86-64.jar -b 64 -t /opt/dynatrace
+sudo wget https://files.dynatrace.com/downloads/OnPrem/dynaTrace/7.0/7.0.0.2469/dynatrace-full-7.0.0.2469-linux-x86-64.jar -P /opt
+sudo /usr/bin/java8 -jar /opt/dynatrace-full-7.0.0.2469-linux-x86-64.jar -b 64 -t /opt/dynatrace
 sudo chown -R dynatrace:dynatrace /opt/dynatrace
 sudo cp /opt/dynatrace/init.d/dynaTraceServer /etc/init.d
 sudo sed -i -e 's,DT_OPTARGS=,DT_OPTARGS="-sizing demo -memory demo",g' /etc/init.d/dynaTraceServer
