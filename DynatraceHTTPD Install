@@ -1,0 +1,6 @@
+#!/bin/bash
+wget  -O Dynatrace-OneAgent-Linux-1.119.186.sh https://{TENANTID}.live.dynatrace.com/installer/oneagent/unix/latest/{UNIQUEID}
+wget https://ca.dynatrace.com/dt-root.cert.pem ; ( echo -e 'Content-Type: multipart/signed; protocol="application/x-pkcs7-signature"; micalg="sha-256"; boundary="--SIGNED-INSTALLER"\n\n----SIGNED-INSTALLER' ; cat Dynatrace-OneAgent-Linux-1.119.186.sh ) | openssl cms -verify -CAfile dt-root.cert.pem > /dev/null
+sudo /bin/sh Dynatrace-OneAgent-Linux-1.119.186.sh APP_LOG_CONTENT_ACCESS=1
+sudo yum install httpd -y
+sudo service httpd start
