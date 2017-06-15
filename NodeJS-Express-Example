@@ -1,6 +1,6 @@
 try
 {
-  require('/opt/dynatrace-oneagent-7.0/agent/bin/any/onenodeloader.js')({ server: 'http://DTSERVERIP:8042', agentName: 'Node.js_Monitoring' });
+  require('/opt/dynatrace-oneagent-7.0/agent/bin/any/onenodeloader.js')({ server: 'http://DTCOLLECTORIP:8042', agentName: 'Node.js_Monitoring' });
 }
 catch (err)
 {
