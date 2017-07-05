@@ -1,5 +1,6 @@
 #!/bin/bash
-# This script starts a small collector with 1GB heap.
+# This script starts a extra small collector with 512MB heap.
+# USE ONLY FOR DEMOS
 sudo useradd dynatrace
 sudo groupadd dynatrace
 sudo usermod -a -G dynatrace dynatrace
