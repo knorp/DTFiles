@@ -9,6 +9,7 @@ sudo wget https://files.dynatrace.com/downloads/OnPrem/dynaTrace/7.0/7.0.0.2469/
 sudo /usr/bin/java8 -jar /opt/dynatrace-collector-7.0.0.2469-linux-x86.jar -b 64 -t /opt/dynatrace
 sudo chown -R dynatrace:dynatrace /opt/dynatrace
 sudo cp /opt/dynatrace/init.d/dynaTraceCollector /etc/init.d
-sudo sed -i -e 's,DT_OPTARGS=,DT_OPTARGS="-server 10.0.0.1 -group My_Collector_Group -instance My_Collector_Name -Xmx1G -Xms1G",g' /etc/init.d/dynaTraceCollector
+sudo sed -i -e 's,DT_OPTARGS=,DT_OPTARGS="-server 10.0.0.1 -group My_Collector_Group -instance My_Collector_Name -Xmx512m -Xms512m",g' /etc/init.d/dynaTraceCollector
 sudo sed -i -e 's,DT_RUNASUSER=,DT_RUNASUSER=dynatrace,g' /etc/init.d/dynaTraceCollector
+sudo chkconfig --add /etc/init.d/dynaTraceCollector
 sudo service dynaTraceCollector start
