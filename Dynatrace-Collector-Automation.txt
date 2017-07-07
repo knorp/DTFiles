@@ -27,7 +27,7 @@ done
 sudo service dynaTraceCollector stop
 
 # Add new line to override external address
-sudo sed -i -e "s,<listenaddress agentaddress=\"\" agentport=\"9998\" />,<listenaddress agentaddress=\"\" agentport=\"9998\" />\n<listenaddress agentaddress=\"$(wget -qO- http://instance-data/latest/meta-data/public-ipv4)\" agentport=\"9998\">,g" /opt/dynatrace/collector/instances/my_collector_name/conf/collector.config.xml
+sudo sed -i -e "s,<listenaddress agentaddress=\"\" agentport=\"9998\" />,<listenaddress agentaddress=\"\" agentport=\"9998\" />\n<listenaddress agentaddress=\"$(wget -qO- http://instance-data/latest/meta-data/public-ipv4)\" agentport=\"9998\" />,g" /opt/dynatrace/collector/instances/my_collector_name/conf/collector.config.xml
 
 # Restart service
 sudo service dynaTraceCollector start
