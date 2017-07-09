@@ -4,23 +4,28 @@
 # Finally, it overrides the default collector external address to ensure it's set as the elastic IP. Thus the collectorlist will be correct.
 # USE ONLY FOR DEMOS
 
+# AWS PARAMS
+AWS_INSTANCE_ID=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)
+AWS_ACCESS_KEY={ACCESS KEY}
+AWS_SECRET_KEY={SECRET KEY}
+AWS_REGION={REGION}
+AWS_ELASTICIP_ALLOCATION_ID={ELASTIC IP ALLOC ID}
+
 #DT PARAMS
 DT_RUNAS_USER=dynatrace
-DT_SERVER_IP=10.0.0.1
+DT_SERVER_IP=35.176.224.170
 DT_COLLECTOR_GROUP=My_Collector_Group
 DT_INSTANCE_NAME=asg_elastic_ip_collector
 DT_COLLECTOR_MEMORY=512m
 
 
 # configure AWS
-aws configure set aws_access_key_id {ACCESS_KEY}
-aws configure set aws_secret_access_key {SECRET-KEY}
-aws configure set region eu-west-2
+aws configure set aws_access_key_id $AWS_ACCESS_KEY
+aws configure set aws_secret_access_key $AWS_SECRET_KEY
+aws configure set region $AWS_REGION
  
 # associate Elastic IP
-INSTANCE_ID=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)
-ALLOCATION_ID={EIP-ALLOCATION_ID}
-aws ec2 associate-address --instance-id $INSTANCE_ID --allocation-id $ALLOCATION_ID --allow-reassociation
+aws ec2 associate-address --instance-id $AWS_INSTANCE_ID --allocation-id $AWS_ELASTICIP_ALLOCATION_ID --allow-reassociation
 
 sudo useradd $DT_RUNAS_USER
 sudo groupadd $DT_RUNAS_USER
@@ -31,8 +36,10 @@ sudo wget https://files.dynatrace.com/downloads/OnPrem/dynaTrace/7.0/7.0.0.2469/
 sudo /usr/bin/java8 -jar /opt/dynatrace-collector-7.0.0.2469-linux-x86.jar -b 64 -t /opt/dynatrace
 sudo chown -R $DT_RUNAS_USER:$DT_RUNAS_USER /opt/dynatrace
 sudo cp /opt/dynatrace/init.d/dynaTraceCollector /etc/init.d
-sudo sed -i -e 's,DT_OPTARGS=,DT_OPTARGS="-server $DT_SERVER_IP -group $DT_COLLECTOR_GROUP -instance $DT_INSTANCE_NAME -Xmx$DT_COLLECTOR_MEMORY -Xms$DT_COLLECTOR_MEMORY",g' /etc/init.d/dynaTraceCollector
-sudo sed -i -e 's,DT_RUNASUSER=,DT_RUNASUSER=$DT_RUNAS_USER,g' /etc/init.d/dynaTraceCollector
+
+sudo sed -i -e "s,DT_OPTARGS=,DT_OPTARGS=\"-server $DT_SERVER_IP -group $DT_COLLECTOR_GROUP -Xmx$DT_COLLECTOR_MEMORY -Xms$DT_COLLECTOR_MEMORY\",g" /etc/init.d/dynaTraceCollector
+sudo sed -i -e "s,DT_INSTANCE=,DT_INSTANCE=$DT_INSTANCE_NAME,g" /etc/init.d/dynaTraceCollector
+sudo sed -i -e "s,DT_RUNASUSER=,DT_RUNASUSER=$DT_RUNAS_USER,g" /etc/init.d/dynaTraceCollector
 sudo chkconfig --add /etc/init.d/dynaTraceCollector
 sudo service dynaTraceCollector start
 
