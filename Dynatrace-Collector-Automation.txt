@@ -1,6 +1,18 @@
 #!/bin/bash
 # This script starts a extra small collector with 512MB heap.
+# It also dynamically re-associates an Elastic IP to this instance to provide a single elastic IP endpoint for the collector.
 # USE ONLY FOR DEMOS
+
+# configure AWS
+aws configure set aws_access_key_id {MY_ACCESS_KEY}
+aws configure set aws_secret_access_key {MY_SECRET_KEY}
+aws configure set region {MY_REGION}
+ 
+# associate Elastic IP
+INSTANCE_ID=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)
+ALLOCATION_ID={MY_EIP_ALLOC_ID}
+aws ec2 associate-address --instance-id $INSTANCE_ID --allocation-id $ALLOCATION_ID --allow-reassociation
+
 sudo useradd dynatrace
 sudo groupadd dynatrace
 sudo usermod -a -G dynatrace dynatrace
