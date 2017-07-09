@@ -1,6 +1,7 @@
 #!/bin/bash
 # This script starts a extra small collector with 512MB heap.
 # It also dynamically re-associates an Elastic IP to this instance to provide a single elastic IP endpoint for the collector.
+# Finally, it overrides the default collector external address to ensure it's set as the elastic IP. Thus the collectorlist will be correct.
 # USE ONLY FOR DEMOS
 
 #DT PARAMS
