@@ -8,11 +8,13 @@ cd /opt
 wget https://files.dynatrace.com/downloads/OnPrem/dynaTrace/7.0/7.0.0.2469/dynatrace-wsagent-7.0.0.2469-linux-x86-64.tar
 tar -xvf dynatrace-wsagent-7.0.0.2469-linux-x86-64.tar
 /opt/dynatrace-wsagent-7.0.0.2469-linux-x64.sh
-chown -R dynatrace:dynatrace /opt/dynatrace-7.0
+cp -R /opt/dynatrace-7.0 /opt/dynatrace
+chown -R dynatrace:dynatrace /opt/dynatrace
 cp /opt/dynatrace-7.0/init.d/dynaTraceWebServerAgent /etc/init.d/dynaTraceWebServerAgent
 sed -i -e 's,DT_RUNASUSER=,DT_RUNASUSER=dynatrace,g' /etc/init.d/dynaTraceWebServerAgent
 sed -i -e 's,Name dtwsagent,Name AGENT-NAME-HERE,g' /opt/dynatrace-7.0/agent/conf/dtwsagent.ini
 sed -i -e 's,Server localhost,Collector COLLECTOR-IP-OR-DNS-HERE,g' /opt/dynatrace-7.0/agent/conf/dtwsagent.ini
+sed -i -e 's,LoadModule version_module modules/mod_version.so,LoadModule version_module modules/mod_version.so\nLoadModule dtagent_module /opt/dynatrace/agent/lib64/libdtagent.so,g' /etc/httpd/conf/httpd.conf
 chkconfig --add /etc/init.d/dynaTraceWebServerAgent
 service dynaTraceWebServerAgent start
 service httpd start
