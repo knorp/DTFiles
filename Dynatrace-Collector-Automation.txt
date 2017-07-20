@@ -27,21 +27,22 @@ aws configure set region $AWS_REGION
 # associate Elastic IP
 aws ec2 associate-address --instance-id $AWS_INSTANCE_ID --allocation-id $AWS_ELASTICIP_ALLOCATION_ID --allow-reassociation
 
-sudo useradd $DT_RUNAS_USER
-sudo groupadd $DT_RUNAS_USER
-sudo usermod -a -G $DT_RUNAS_USER $DT_RUNAS_USER
-sudo yum update -y
-sudo yum install java-1.8.0-openjdk wget -y
-sudo wget https://files.dynatrace.com/downloads/OnPrem/dynaTrace/7.0/7.0.0.2469/dynatrace-collector-7.0.0.2469-linux-x86.jar -P /opt
-sudo /usr/bin/java8 -jar /opt/dynatrace-collector-7.0.0.2469-linux-x86.jar -b 64 -t /opt/dynatrace
-sudo chown -R $DT_RUNAS_USER:$DT_RUNAS_USER /opt/dynatrace
-sudo cp /opt/dynatrace/init.d/dynaTraceCollector /etc/init.d
+useradd $DT_RUNAS_USER
+groupadd $DT_RUNAS_USER
+usermod -a -G $DT_RUNAS_USER $DT_RUNAS_USER
+yum update -y
+yum install java-1.8.0-openjdk wget -y
+cd /opt
+wget https://files.dynatrace.com/downloads/OnPrem/dynaTrace/7.0/7.0.0.2469/dynatrace-collector-7.0.0.2469-linux-x86.jar
+/usr/bin/java8 -jar /opt/dynatrace-collector-7.0.0.2469-linux-x86.jar -b 64 -t /opt/dynatrace
+chown -R $DT_RUNAS_USER:$DT_RUNAS_USER /opt/dynatrace
+cp /opt/dynatrace/init.d/dynaTraceCollector /etc/init.d
 
-sudo sed -i -e "s,DT_OPTARGS=,DT_OPTARGS=\"-server $DT_SERVER_IP -group $DT_COLLECTOR_GROUP -Xmx$DT_COLLECTOR_MEMORY -Xms$DT_COLLECTOR_MEMORY\",g" /etc/init.d/dynaTraceCollector
-sudo sed -i -e "s,DT_INSTANCE=,DT_INSTANCE=$DT_INSTANCE_NAME,g" /etc/init.d/dynaTraceCollector
-sudo sed -i -e "s,DT_RUNASUSER=,DT_RUNASUSER=$DT_RUNAS_USER,g" /etc/init.d/dynaTraceCollector
-sudo chkconfig --add /etc/init.d/dynaTraceCollector
-sudo service dynaTraceCollector start
+sed -i -e "s,DT_OPTARGS=,DT_OPTARGS=\"-server $DT_SERVER_IP -group $DT_COLLECTOR_GROUP -Xmx$DT_COLLECTOR_MEMORY -Xms$DT_COLLECTOR_MEMORY\",g" /etc/init.d/dynaTraceCollector
+sed -i -e "s,DT_INSTANCE=,DT_INSTANCE=$DT_INSTANCE_NAME,g" /etc/init.d/dynaTraceCollector
+sed -i -e "s,DT_RUNASUSER=,DT_RUNASUSER=$DT_RUNAS_USER,g" /etc/init.d/dynaTraceCollector
+chkconfig --add /etc/init.d/dynaTraceCollector
+service dynaTraceCollector start
 
 # Wait for required file to be created
 while [ ! -f /opt/dynatrace/collector/instances/$DT_INSTANCE_NAME/conf/collector.config.xml ]
@@ -50,10 +51,10 @@ do
 done
 
 # Release file locks
-sudo service dynaTraceCollector stop
+service dynaTraceCollector stop
 
 # Add new line to override external address and set to Elastic IP
-sudo sed -i -e "s,<listenaddress agentaddress=\"\" agentport=\"9998\" />,<listenaddress agentaddress=\"\" agentport=\"9998\" />\n<listenaddress agentaddress=\"$(wget -qO- http://instance-data/latest/meta-data/public-ipv4)\" agentport=\"9998\" />,g" /opt/dynatrace/collector/instances/$DT_INSTANCE_NAME/conf/collector.config.xml
+sed -i -e "s,<listenaddress agentaddress=\"\" agentport=\"9998\" />,<listenaddress agentaddress=\"\" agentport=\"9998\" />\n<listenaddress agentaddress=\"$(wget -qO- http://instance-data/latest/meta-data/public-ipv4)\" agentport=\"9998\" />,g" /opt/dynatrace/collector/instances/$DT_INSTANCE_NAME/conf/collector.config.xml
 
 # Restart service
-sudo service dynaTraceCollector start
+service dynaTraceCollector start
