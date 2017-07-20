@@ -11,6 +11,7 @@ tar -xvf dynatrace-wsagent-7.0.0.2469-linux-x86-64.tar
 mv /opt/dynatrace-7.0 /opt/dynatrace
 chown -R dynatrace:dynatrace /opt/dynatrace
 cp /opt/dynatrace/init.d/dynaTraceWebServerAgent /etc/init.d/dynaTraceWebServerAgent
+sed -i -e 's,DT_HOME="/opt/dynatrace-7.0",DT_HOME="/opt/dynatrace",g' /etc/init.d/dynaTraceWebServerAgent
 sed -i -e 's,DT_RUNASUSER=,DT_RUNASUSER=dynatrace,g' /etc/init.d/dynaTraceWebServerAgent
 sed -i -e 's,Name dtwsagent,Name AGENT-NAME-HERE,g' /opt/dynatrace/agent/conf/dtwsagent.ini
 sed -i -e 's,Server localhost,Collector COLLECTOR-IP-OR-DNS-HERE,g' /opt/dynatrace/agent/conf/dtwsagent.ini
