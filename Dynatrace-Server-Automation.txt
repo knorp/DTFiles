@@ -5,7 +5,7 @@ usermod -a -G dynatrace dynatrace
 yum update -y
 yum install java-1.8.0-openjdk wget -y
 cd /opt
-wget https://files.dynatrace.com/downloads/OnPrem/dynaTrace/7.0/7.0.0.2469/dynatrace-server-7.0.0.2469-linux-x86.jar -P /opt
+wget https://files.dynatrace.com/downloads/OnPrem/dynaTrace/7.0/7.0.0.2469/dynatrace-server-7.0.0.2469-linux-x86.jar
 /usr/bin/java8 -jar dynatrace-server-7.0.0.2469-linux-x86.jar -b 64 -t /opt/dynatrace
 chown -R dynatrace:dynatrace /opt/dynatrace
 cp /opt/dynatrace/init.d/dynaTraceServer /etc/init.d
