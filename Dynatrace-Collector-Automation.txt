@@ -1,34 +1,14 @@
 #!/bin/bash
-# This script starts a extra small collector with 512MB heap.
-# USE ONLY FOR DEMOS
 useradd dynatrace
 groupadd dynatrace
 usermod -a -G dynatrace dynatrace
 yum update -y
 yum install java-1.8.0-openjdk wget -y
 cd /opt
-wget https://files.dynatrace.com/downloads/OnPrem/dynaTrace/7.0/7.0.0.2469/dynatrace-collector-7.0.0.2469-linux-x86.jar -P /opt
+wget https://files.dynatrace.com/downloads/OnPrem/dynaTrace/7.0/7.0.0.2469/dynatrace-collector-7.0.0.2469-linux-x86.jar
 /usr/bin/java8 -jar /opt/dynatrace-collector-7.0.0.2469-linux-x86.jar -b 64 -t /opt/dynatrace
 chown -R dynatrace:dynatrace /opt/dynatrace
 cp /opt/dynatrace/init.d/dynaTraceCollector /etc/init.d
-sed -i -e 's,DT_OPTARGS=,DT_OPTARGS="-server 35.176.224.170 -group My_Collector_Group -instance My_Collector_Name -Xmx512m -Xms512m",g' /etc/init.d/dynaTraceCollector
+sed -i -e 's,DT_OPTARGS=,DT_OPTARGS="-server 10.0.0.1 -group My_Collector_Group -instance My_Collector_Name -Xmx1G -Xms1G",g' /etc/init.d/dynaTraceCollector
 sed -i -e 's,DT_RUNASUSER=,DT_RUNASUSER=dynatrace,g' /etc/init.d/dynaTraceCollector
-chkconfig --add /etc/init.d/dynaTraceCollector
-
-# Start service - this creates files
-service dynaTraceCollector start
-
-# Wait for required file to be created
-while [ ! -f /opt/dynatrace/collector/instances/my_collector_name/conf/collector.config.xml ]
-do
-  sleep 1
-done
-
-# Release file locks
-service dynaTraceCollector stop
-
-# Add new line to override external address
-sed -i -e "s,<listenaddress agentaddress=\"\" agentport=\"9998\" />,<listenaddress agentaddress=\"\" agentport=\"9998\" />\n<listenaddress agentaddress=\"$(wget -qO- http://instance-data/latest/meta-data/public-ipv4)\" agentport=\"9998\" />,g" /opt/dynatrace/collector/instances/my_collector_name/conf/collector.config.xml
-
-# Restart service
 service dynaTraceCollector start
