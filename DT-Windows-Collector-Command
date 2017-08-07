@@ -1,0 +1,1 @@
+dtcollector -service install -listen 10000 -listenOneAgent 8046 -group my-group-name -instance 7-10k-collector
