@@ -1,0 +1,10 @@
+#!/bin/bash
+# This installs a demo JAR and the Java agent
+# Then connects to a collector listed on line 10
+yum update -y
+yum install java-1.8.0-openjdk wget -y
+cd /opt
+wget https://github.com/Dynatrace-Adam-Gardner/DTFiles/raw/master/ABLooper.jar
+wget https://files.dynatrace.com/downloads/OnPrem/dynaTrace/7.0/7.0.0.2469/dynatrace-agent-7.0.0.2469-unix.jar
+java -jar /opt/dynatrace-agent-7.0.0.2469-unix.jar -b 64 -t /opt/dynatrace
+/usr/bin/java8 -jar -agentpath:/opt/dynatrace/agent/lib64/libdtagent.so=name=ABLooper_Monitoring,collector=COLLECTOR-IP /opt/ABLooper.jar
