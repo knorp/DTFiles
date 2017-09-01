@@ -1,0 +1,30 @@
+#!/bin/bash
+# Install nodejs, the dynatrace agent and a basic nodejs webserver
+cd /opt
+wget https://nodejs.org/dist/v6.11.2/node-v6.11.2-linux-x64.tar.xz
+tar xf node-v6.11.2-linux-x64.tar.xz
+mv node-v6.11.2-linux-x64 nodejs
+echo 'PATH="$PATH:/opt/nodejs/bin"' | sudo tee -a /etc/profile
+npm install express --save
+wget https://files.dynatrace.com/downloads/OnPrem/dynaTrace/7.0/7.0.0.2469/dynatrace-one-agent-nodejs-7.0.0.2469-linux-x86.tgz
+tar -xvf dynatrace-one-agent-nodejs-7.0.0.2469-linux-x86.tgz
+mkdir --parents /opt/webserver
+touch /opt/webserver/express.js
+echo "try
+{
+  require('/opt/dynatrace-oneagent-7.0/agent/bin/any/onenodeloader.js')({ server: 'http://DTCOLLECTORIP:8042', agentName: 'NodeJS_Monitoring' });
+}
+catch (err)
+{
+  console.error(err.toString());
+}
+
+var http = require('http');
+http.createServer(function (req, res)
+{
+  res.writeHead(200, {'Content-Type': 'text/html'});
+  res.end('<!DOCTYPE html><html><head><title>Demo Page</title></head><body>Hello World.</body></html>');
+}
+    ).listen(3000, function () {
+console.log('Server running at http://127.0.0.1:3000/');
+});" | sudo tee -a /opt/webserver/express.js
